@@ -69,7 +69,19 @@ CRUD operations are implemented using service classes, where each operation (cre
 * Fixing issues related to Git and project setup.
 
 
+## Data Export and Import
 
+The project supports data export and import in CSV format.
+
+Users can:
+- export guests to CSV
+- export rooms to CSV
+- export reservations to CSV
+- import guests from CSV
+- import rooms from CSV
+- import reservations from CSV
+
+This functionality is available through the console menu.
 
 
 
