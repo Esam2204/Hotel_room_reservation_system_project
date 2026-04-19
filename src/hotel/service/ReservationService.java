@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package hotel.service;
 import hotel.util.FileUtil;
 import hotel.model.Reservation;
