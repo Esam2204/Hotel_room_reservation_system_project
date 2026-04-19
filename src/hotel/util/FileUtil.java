@@ -17,7 +17,9 @@ public class FileUtil {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                lines.add(line);
+                if (!line.trim().isEmpty()) {
+                    lines.add(line);
+                }
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
@@ -27,10 +29,18 @@ public class FileUtil {
     }
 
     public static void writeLines(String path, List<String> lines) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-            for (String line : lines) {
-                writer.write(line);
-                writer.newLine();
+        try {
+            File file = new File(path);
+            File parent = file.getParentFile();
+            if (parent != null && !parent.exists()) {
+                parent.mkdirs();
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                for (String line : lines) {
+                    writer.write(line);
+                    writer.newLine();
+                }
             }
         } catch (IOException e) {
             System.out.println("Error writing file: " + e.getMessage());
@@ -38,9 +48,17 @@ public class FileUtil {
     }
 
     public static void appendLine(String path, String line) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
-            writer.write(line);
-            writer.newLine();
+        try {
+            File file = new File(path);
+            File parent = file.getParentFile();
+            if (parent != null && !parent.exists()) {
+                parent.mkdirs();
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+                writer.write(line);
+                writer.newLine();
+            }
         } catch (IOException e) {
             System.out.println("Error appending file: " + e.getMessage());
         }

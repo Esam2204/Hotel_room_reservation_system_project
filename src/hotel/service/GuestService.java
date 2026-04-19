@@ -1,7 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
 
 package hotel.service;
 import hotel.util.FileUtil;
@@ -22,6 +18,67 @@ public class GuestService {
         this.guests.add(var1);
         this.saveGuests();
     }
+
+    public void exportToCsv(String path) {
+        List<String> lines = new ArrayList<>();
+        lines.add("id,name,email,phone");
+
+        for (Guest guest : getAllGuests()) {
+            lines.add(
+                    guest.getId() + "," +
+                            guest.getName() + "," +
+                            guest.getEmail() + "," +
+                            guest.getPhoneNumber()
+            );
+        }
+
+        FileUtil.writeLines(path, lines);
+    }
+
+    public void importFromCsv(String path) {
+        List<String> lines = FileUtil.readLines(path);
+
+        if (lines.isEmpty()) {
+            System.out.println("CSV file is empty or not found.");
+            return;
+        }
+
+        List<Guest> importedGuests = new ArrayList<>();
+
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] parts = line.split(",");
+
+            if (parts.length < 4) {
+                continue;
+            }
+
+            try {
+                int id = Integer.parseInt(parts[0].trim());
+                String name = parts[1].trim();
+                String email = parts[2].trim();
+                String phone = parts[3].trim();
+
+                importedGuests.add(new Guest(id, name, email, phone));
+            } catch (Exception e) {
+                System.out.println("Skipping invalid guest row: " + line);
+            }
+        }
+
+        List<String> outputLines = new ArrayList<>();
+        for (Guest guest : importedGuests) {
+            outputLines.add(
+                    guest.getId() + "," +
+                            guest.getName() + "," +
+                            guest.getEmail() + "," +
+                            guest.getPhoneNumber()
+            );
+        }
+
+        FileUtil.writeLines("data/guests.txt", outputLines);
+        System.out.println("Guests imported successfully.");
+    }
+
 
     public List<Guest> getAllGuests() {
         return this.guests;

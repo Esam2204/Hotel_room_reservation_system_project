@@ -71,6 +71,12 @@ public class Main {
                     case 3:
                         reservationMenu();
                         break;
+                    case 4:
+                        exportMenu();
+                        break;
+                    case 5:
+                        importMenu();
+                        break;
                     default:
                         System.out.println("Invalid menu option.");
                 }
@@ -88,6 +94,8 @@ public class Main {
         System.out.println("1. Manage Guests");
         System.out.println("2. Manage Rooms");
         System.out.println("3. Manage Reservations");
+        System.out.println("4. Export Data");
+        System.out.println("5. Import Data");
         System.out.println("0. Exit");
     }
 
@@ -327,6 +335,61 @@ public class Main {
             System.out.println("Reservation not found.");
         }
 
+    }
+
+    private static void exportMenu() {
+        System.out.println("\n----- EXPORT MENU -----");
+        System.out.println("1. Export Guests to CSV");
+        System.out.println("2. Export Rooms to CSV");
+        System.out.println("3. Export Reservations to CSV");
+        System.out.println("0. Back");
+
+        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
+
+        switch (choice) {
+            case 0:
+                break;
+            case 1:
+                guestService.exportToCsv("exports/guests.csv");
+                System.out.println("Guests exported successfully.");
+                break;
+            case 2:
+                roomService.exportToCsv("exports/rooms.csv");
+                System.out.println("Rooms exported successfully.");
+                break;
+            case 3:
+                reservationService.exportToCsv("exports/reservations.csv");
+                System.out.println("Reservations exported successfully.");
+                break;
+            default:
+                System.out.println("Invalid menu option.");
+        }
+    }
+
+    private static void importMenu() {
+        System.out.println("\n----- IMPORT MENU -----");
+        System.out.println("1. Import Guests from CSV");
+        System.out.println("2. Import Rooms from CSV");
+        System.out.println("3. Import Reservations from CSV");
+        System.out.println("0. Back");
+
+        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
+
+        switch (choice) {
+            case 0:
+                break;
+            case 1:
+                guestService.importFromCsv("exports/guests.csv");
+                break;
+            case 2:
+                roomService.importFromCsv("exports/rooms.csv");
+                break;
+            case 3:
+                reservationService.importFromCsv("exports/reservations.csv");
+                break;
+            default:
+                System.out.println("Invalid menu option.");
+        }
     }
 
     static {

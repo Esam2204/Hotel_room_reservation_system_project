@@ -92,6 +92,74 @@ public class ReservationService {
         }
     }
 
+    public void exportToCsv(String path) {
+        List<String> lines = new ArrayList<>();
+        lines.add("id,guestId,roomId,checkInDate,checkOutDate,status");
+
+        for (Reservation reservation : getAllReservations()) {
+            lines.add(
+                    reservation.getId() + "," +
+                            reservation.getGuestId() + "," +
+                            reservation.getRoomId() + "," +
+                            reservation.getCheckInDate() + "," +
+                            reservation.getCheckOutDate() + "," +
+                            reservation.getStatus()
+            );
+        }
+
+        FileUtil.writeLines(path, lines);
+    }
+
+    public void importFromCsv(String path) {
+        List<String> lines = FileUtil.readLines(path);
+
+        if (lines.isEmpty()) {
+            System.out.println("CSV file is empty or not found.");
+            return;
+        }
+
+        List<Reservation> importedReservations = new ArrayList<>();
+
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] parts = line.split(",");
+
+            if (parts.length < 6) {
+                continue;
+            }
+
+            try {
+                int id = Integer.parseInt(parts[0].trim());
+                int guestId = Integer.parseInt(parts[1].trim());
+                int roomId = Integer.parseInt(parts[2].trim());
+                String checkInDate = parts[3].trim();
+                String checkOutDate = parts[4].trim();
+                String status = parts[5].trim();
+
+                importedReservations.add(
+                        new Reservation(id, guestId, roomId, checkInDate, checkOutDate, status)
+                );
+            } catch (Exception e) {
+                System.out.println("Skipping invalid reservation row: " + line);
+            }
+        }
+
+        List<String> outputLines = new ArrayList<>();
+        for (Reservation reservation : importedReservations) {
+            outputLines.add(
+                    reservation.getId() + "," +
+                            reservation.getGuestId() + "," +
+                            reservation.getRoomId() + "," +
+                            reservation.getCheckInDate() + "," +
+                            reservation.getCheckOutDate() + "," +
+                            reservation.getStatus()
+            );
+        }
+
+        FileUtil.writeLines("data/reservations.txt", outputLines);
+        System.out.println("Reservations imported successfully.");
+    }
+
     public int generateNextId() {
         int var1 = 0;
 
