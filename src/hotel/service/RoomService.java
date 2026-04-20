@@ -1,7 +1,7 @@
 package hotel.service;
-import hotel.util.FileUtil;
 
 import hotel.model.Room;
+import hotel.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +13,8 @@ public class RoomService {
     public RoomService() {
     }
 
-    public void addRoom(Room var1) {
-        this.rooms.add(var1);
+    public void addRoom(Room room) {
+        this.rooms.add(room);
         this.saveRooms();
     }
 
@@ -22,40 +22,43 @@ public class RoomService {
         return this.rooms;
     }
 
-    public Room findById(int var1) {
-        for(Room var3 : this.rooms) {
-            if (var3.getId() == var1) {
-                return var3;
+    public Room findById(int id) {
+        for (Room room : this.rooms) {
+            if (room.getId() == id) {
+                return room;
             }
         }
-
         return null;
     }
 
-    public boolean updateRoom(int var1, String var2, String var3, double var4, boolean var6) {
-        Room var7 = this.findById(var1);
-        if (var7 == null) {
+    public boolean updateRoom(int id, String roomNumber, String type, double pricePerNight, boolean available) {
+        Room room = this.findById(id);
+
+        if (room == null) {
             return false;
-        } else {
-            var7.setRoomNumber(var2);
-            var7.setType(var3);
-            var7.setPricePerNight(var4);
-            var7.setAvailable(var6);
-            this.saveRooms();
-            return true;
         }
+
+        room.setRoomNumber(roomNumber);
+        room.setType(type);
+        room.setPricePerNight(pricePerNight);
+        room.setAvailable(available);
+
+        this.saveRooms();
+        return true;
     }
 
-    public boolean deleteRoom(int var1) {
-        Room var2 = this.findById(var1);
-        if (var2 == null) {
+    public boolean deleteRoom(int id) {
+        Room room = this.findById(id);
+
+        if (room == null) {
             return false;
-        } else {
-            this.rooms.remove(var2);
-            this.saveRooms();
-            return true;
         }
+
+        this.rooms.remove(room);
+        this.saveRooms();
+        return true;
     }
+
     public void exportToCsv(String path) {
         List<String> lines = new ArrayList<>();
         lines.add("id,roomNumber,type,price,available");
@@ -95,10 +98,10 @@ public class RoomService {
                 int id = Integer.parseInt(parts[0].trim());
                 String roomNumber = parts[1].trim();
                 String type = parts[2].trim();
-                double price = Double.parseDouble(parts[3].trim());
+                double pricePerNight = Double.parseDouble(parts[3].trim());
                 boolean available = Boolean.parseBoolean(parts[4].trim());
 
-                importedRooms.add(new Room(id, roomNumber, type, price, available));
+                importedRooms.add(new Room(id, roomNumber, type, pricePerNight, available));
             } catch (Exception e) {
                 System.out.println("Skipping invalid room row: " + line);
             }
@@ -115,52 +118,63 @@ public class RoomService {
             );
         }
 
-        FileUtil.writeLines("data/rooms.txt", outputLines);
+        FileUtil.writeLines(FILE_PATH, outputLines);
         System.out.println("Rooms imported successfully.");
     }
 
     public int generateNextId() {
-        int var1 = 0;
+        int maxId = 0;
 
-        for(Room var3 : this.rooms) {
-            if (var3.getId() > var1) {
-                var1 = var3.getId();
+        for (Room room : this.rooms) {
+            if (room.getId() > maxId) {
+                maxId = room.getId();
             }
         }
 
-        return var1 + 1;
+        return maxId + 1;
     }
 
     private List<Room> loadRooms() {
-        ArrayList var1 = new ArrayList();
+        List<Room> loadedRooms = new ArrayList<>();
 
-        for(String var4 : FileUtil.readLines("data/rooms.txt")) {
-            if (!var4.trim().isEmpty()) {
-                String[] var5 = var4.split("\\|");
-                if (var5.length == 5) {
+        for (String line : FileUtil.readLines(FILE_PATH)) {
+            if (!line.trim().isEmpty()) {
+                String[] parts = line.split("\\|");
+
+                if (parts.length == 5) {
                     try {
-                        int var6 = Integer.parseInt(var5[0]);
-                        double var7 = Double.parseDouble(var5[3]);
-                        boolean var9 = Boolean.parseBoolean(var5[4]);
-                        var1.add(new Room(var6, var5[1], var5[2], var7, var9));
-                    } catch (Exception var10) {
-                        System.out.println("Skipped invalid room line: " + var4);
+                        int id = Integer.parseInt(parts[0]);
+                        String roomNumber = parts[1];
+                        String type = parts[2];
+                        double pricePerNight = Double.parseDouble(parts[3]);
+                        boolean available = Boolean.parseBoolean(parts[4]);
+
+                        loadedRooms.add(
+                                new Room(id, roomNumber, type, pricePerNight, available)
+                        );
+                    } catch (Exception e) {
+                        System.out.println("Skipped invalid room line: " + line);
                     }
                 }
             }
         }
 
-        return var1;
+        return loadedRooms;
     }
 
     public void saveRooms() {
-        ArrayList var1 = new ArrayList();
+        List<String> lines = new ArrayList<>();
 
-        for(Room var3 : this.rooms) {
-            int var10001 = var3.getId();
-            var1.add(var10001 + "|" + var3.getRoomNumber() + "|" + var3.getType() + "|" + var3.getPricePerNight() + "|" + var3.isAvailable());
+        for (Room room : this.rooms) {
+            lines.add(
+                    room.getId() + "|" +
+                            room.getRoomNumber() + "|" +
+                            room.getType() + "|" +
+                            room.getPricePerNight() + "|" +
+                            room.isAvailable()
+            );
         }
 
-        FileUtil.writeLines("data/rooms.txt", var1);
+        FileUtil.writeLines(FILE_PATH, lines);
     }
 }

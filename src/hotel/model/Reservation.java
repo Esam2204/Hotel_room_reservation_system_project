@@ -8,46 +8,46 @@ public class Reservation {
     private String checkOutDate;
     private String status;
 
-    public Reservation(int var1, int var2, int var3, String var4, String var5, String var6) {
-        this.id = var1;
-        this.guestId = var2;
-        this.roomId = var3;
-        this.checkInDate = var4;
-        this.checkOutDate = var5;
-        this.status = var6;
+    public Reservation(int id, int guestId, int roomId, String checkInDate, String checkOutDate, String status) {
+        this.id = id;
+        this.guestId = guestId;
+        this.roomId = roomId;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.status = status;
     }
 
     public int getId() {
         return this.id;
     }
 
-    public void setId(int var1) {
-        this.id = var1;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getGuestId() {
         return this.guestId;
     }
 
-    public void setGuestId(int var1) {
-        this.guestId = var1;
+    public void setGuestId(int guestId) {
+        this.guestId = guestId;
     }
 
     public int getRoomId() {
         return this.roomId;
     }
 
-    public void setRoomId(int var1) {
-        this.roomId = var1;
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public String getCheckInDate() {
         return this.checkInDate;
     }
 
-    public void setCheckInDate(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.checkInDate = var1.trim();
+    public void setCheckInDate(String checkInDate) {
+        if (checkInDate != null && !checkInDate.trim().isEmpty()) {
+            this.checkInDate = checkInDate.trim();
         } else {
             throw new IllegalArgumentException("Check-in date cannot be empty.");
         }
@@ -57,9 +57,9 @@ public class Reservation {
         return this.checkOutDate;
     }
 
-    public void setCheckOutDate(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.checkOutDate = var1.trim();
+    public void setCheckOutDate(String checkOutDate) {
+        if (checkOutDate != null && !checkOutDate.trim().isEmpty()) {
+            this.checkOutDate = checkOutDate.trim();
         } else {
             throw new IllegalArgumentException("Check-out date cannot be empty.");
         }
@@ -69,15 +69,24 @@ public class Reservation {
         return this.status;
     }
 
-    public void setStatus(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.status = var1.trim();
+    public void setStatus(String status) {
+        if (status != null && !status.trim().isEmpty()) {
+            this.status = status.trim();
         } else {
             throw new IllegalArgumentException("Status cannot be empty.");
         }
     }
 
+    @Override
     public String toString() {
-        return String.format("ID: %d | Guest ID: %d | Room ID: %d | Check-in: %s | Check-out: %s | Status: %s", this.id, this.guestId, this.roomId, this.checkInDate, this.checkOutDate, this.status);
+        return String.format(
+                "ID: %d | Guest ID: %d | Room ID: %d | Check-in: %s | Check-out: %s | Status: %s",
+                this.id,
+                this.guestId,
+                this.roomId,
+                this.checkInDate,
+                this.checkOutDate,
+                this.status
+        );
     }
 }

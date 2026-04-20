@@ -1,7 +1,7 @@
 package hotel.service;
-import hotel.util.FileUtil;
 
 import hotel.model.Guest;
+import hotel.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +13,8 @@ public class GuestService {
     public GuestService() {
     }
 
-    public void addGuest(Guest var1) {
-        this.guests.add(var1);
+    public void addGuest(Guest guest) {
+        this.guests.add(guest);
         this.saveGuests();
     }
 
@@ -56,9 +56,9 @@ public class GuestService {
                 int id = Integer.parseInt(parts[0].trim());
                 String name = parts[1].trim();
                 String email = parts[2].trim();
-                String phone = parts[3].trim();
+                String phoneNumber = parts[3].trim();
 
-                importedGuests.add(new Guest(id, name, email, phone));
+                importedGuests.add(new Guest(id, name, email, phoneNumber));
             } catch (Exception e) {
                 System.out.println("Skipping invalid guest row: " + line);
             }
@@ -74,89 +74,99 @@ public class GuestService {
             );
         }
 
-        FileUtil.writeLines("data/guests.txt", outputLines);
+        FileUtil.writeLines(FILE_PATH, outputLines);
         System.out.println("Guests imported successfully.");
     }
-
 
     public List<Guest> getAllGuests() {
         return this.guests;
     }
 
-    public Guest findById(int var1) {
-        for(Guest var3 : this.guests) {
-            if (var3.getId() == var1) {
-                return var3;
+    public Guest findById(int id) {
+        for (Guest guest : this.guests) {
+            if (guest.getId() == id) {
+                return guest;
             }
         }
 
         return null;
     }
 
-    public boolean updateGuest(int var1, String var2, String var3, String var4) {
-        Guest var5 = this.findById(var1);
-        if (var5 == null) {
+    public boolean updateGuest(int id, String name, String email, String phoneNumber) {
+        Guest guest = this.findById(id);
+
+        if (guest == null) {
             return false;
         } else {
-            var5.setName(var2);
-            var5.setEmail(var3);
-            var5.setPhoneNumber(var4);
+            guest.setName(name);
+            guest.setEmail(email);
+            guest.setPhoneNumber(phoneNumber);
             this.saveGuests();
             return true;
         }
     }
 
-    public boolean deleteGuest(int var1) {
-        Guest var2 = this.findById(var1);
-        if (var2 == null) {
+    public boolean deleteGuest(int id) {
+        Guest guest = this.findById(id);
+
+        if (guest == null) {
             return false;
         } else {
-            this.guests.remove(var2);
+            this.guests.remove(guest);
             this.saveGuests();
             return true;
         }
     }
 
     public int generateNextId() {
-        int var1 = 0;
+        int maxId = 0;
 
-        for(Guest var3 : this.guests) {
-            if (var3.getId() > var1) {
-                var1 = var3.getId();
+        for (Guest guest : this.guests) {
+            if (guest.getId() > maxId) {
+                maxId = guest.getId();
             }
         }
 
-        return var1 + 1;
+        return maxId + 1;
     }
 
     private List<Guest> loadGuests() {
-        ArrayList var1 = new ArrayList();
+        List<Guest> loadedGuests = new ArrayList<>();
 
-        for(String var4 : FileUtil.readLines("data/guests.txt")) {
-            if (!var4.trim().isEmpty()) {
-                String[] var5 = var4.split("\\|");
-                if (var5.length == 4) {
+        for (String line : FileUtil.readLines(FILE_PATH)) {
+            if (!line.trim().isEmpty()) {
+                String[] parts = line.split("\\|");
+
+                if (parts.length == 4) {
                     try {
-                        int var6 = Integer.parseInt(var5[0]);
-                        var1.add(new Guest(var6, var5[1], var5[2], var5[3]));
-                    } catch (Exception var7) {
-                        System.out.println("Skipped invalid guest line: " + var4);
+                        int id = Integer.parseInt(parts[0]);
+                        String name = parts[1];
+                        String email = parts[2];
+                        String phoneNumber = parts[3];
+
+                        loadedGuests.add(new Guest(id, name, email, phoneNumber));
+                    } catch (Exception e) {
+                        System.out.println("Skipped invalid guest line: " + line);
                     }
                 }
             }
         }
 
-        return var1;
+        return loadedGuests;
     }
 
     private void saveGuests() {
-        ArrayList var1 = new ArrayList();
+        List<String> lines = new ArrayList<>();
 
-        for(Guest var3 : this.guests) {
-            int var10001 = var3.getId();
-            var1.add(var10001 + "|" + var3.getName() + "|" + var3.getEmail() + "|" + var3.getPhoneNumber());
+        for (Guest guest : this.guests) {
+            lines.add(
+                    guest.getId() + "|" +
+                            guest.getName() + "|" +
+                            guest.getEmail() + "|" +
+                            guest.getPhoneNumber()
+            );
         }
 
-        FileUtil.writeLines("data/guests.txt", var1);
+        FileUtil.writeLines(FILE_PATH, lines);
     }
 }

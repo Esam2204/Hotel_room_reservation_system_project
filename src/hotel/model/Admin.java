@@ -3,23 +3,24 @@ package hotel.model;
 public class Admin extends Person {
     private String department;
 
-    public Admin(int var1, String var2, String var3, String var4) {
-        super(var1, var2, var3);
-        this.department = var4;
+    public Admin(int id, String name, String email, String department) {
+        super(id, name, email);
+        this.department = department;
     }
 
     public String getDepartment() {
         return this.department;
     }
 
-    public void setDepartment(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.department = var1.trim();
+    public void setDepartment(String department) {
+        if (department != null && !department.trim().isEmpty()) {
+            this.department = department.trim();
         } else {
             throw new IllegalArgumentException("Department cannot be empty.");
         }
     }
 
+    @Override
     public String getRoleDescription() {
         return "Admin Staff";
     }

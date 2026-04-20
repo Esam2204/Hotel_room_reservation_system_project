@@ -1,7 +1,8 @@
 package hotel.service;
-import hotel.util.FileUtil;
+
 import hotel.model.Reservation;
 import hotel.model.Room;
+import hotel.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +12,17 @@ public class ReservationService {
     private final List<Reservation> reservations;
     private final RoomService roomService;
 
-    public ReservationService(RoomService var1) {
-        this.roomService = var1;
+    public ReservationService(RoomService roomService) {
+        this.roomService = roomService;
         this.reservations = this.loadReservations();
     }
 
-    public void addReservation(Reservation var1) {
-        this.reservations.add(var1);
-        Room var2 = this.roomService.findById(var1.getRoomId());
-        if (var2 != null) {
-            var2.setAvailable(false);
+    public void addReservation(Reservation reservation) {
+        this.reservations.add(reservation);
+
+        Room room = this.roomService.findById(reservation.getRoomId());
+        if (room != null) {
+            room.setAvailable(false);
             this.roomService.saveRooms();
         }
 
@@ -31,60 +33,66 @@ public class ReservationService {
         return this.reservations;
     }
 
-    public Reservation findById(int var1) {
-        for(Reservation var3 : this.reservations) {
-            if (var3.getId() == var1) {
-                return var3;
+    public Reservation findById(int id) {
+        for (Reservation reservation : this.reservations) {
+            if (reservation.getId() == id) {
+                return reservation;
             }
         }
-
         return null;
     }
 
-    public boolean updateReservation(int var1, int var2, int var3, String var4, String var5, String var6) {
-        Reservation var7 = this.findById(var1);
-        if (var7 == null) {
+    public boolean updateReservation(int id, int guestId, int roomId,
+                                     String checkInDate, String checkOutDate, String status) {
+
+        Reservation reservation = this.findById(id);
+
+        if (reservation == null) {
             return false;
-        } else {
-            if (var7.getRoomId() != var3) {
-                Room var8 = this.roomService.findById(var7.getRoomId());
-                if (var8 != null) {
-                    var8.setAvailable(true);
-                }
+        }
 
-                Room var9 = this.roomService.findById(var3);
-                if (var9 != null) {
-                    var9.setAvailable(false);
-                }
-
-                this.roomService.saveRooms();
+        // если сменили комнату
+        if (reservation.getRoomId() != roomId) {
+            Room oldRoom = this.roomService.findById(reservation.getRoomId());
+            if (oldRoom != null) {
+                oldRoom.setAvailable(true);
             }
 
-            var7.setGuestId(var2);
-            var7.setRoomId(var3);
-            var7.setCheckInDate(var4);
-            var7.setCheckOutDate(var5);
-            var7.setStatus(var6);
-            this.saveReservations();
-            return true;
+            Room newRoom = this.roomService.findById(roomId);
+            if (newRoom != null) {
+                newRoom.setAvailable(false);
+            }
+
+            this.roomService.saveRooms();
         }
+
+        reservation.setGuestId(guestId);
+        reservation.setRoomId(roomId);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckOutDate(checkOutDate);
+        reservation.setStatus(status);
+
+        this.saveReservations();
+        return true;
     }
 
-    public boolean deleteReservation(int var1) {
-        Reservation var2 = this.findById(var1);
-        if (var2 == null) {
-            return false;
-        } else {
-            Room var3 = this.roomService.findById(var2.getRoomId());
-            if (var3 != null) {
-                var3.setAvailable(true);
-                this.roomService.saveRooms();
-            }
+    public boolean deleteReservation(int id) {
+        Reservation reservation = this.findById(id);
 
-            this.reservations.remove(var2);
-            this.saveReservations();
-            return true;
+        if (reservation == null) {
+            return false;
         }
+
+        Room room = this.roomService.findById(reservation.getRoomId());
+        if (room != null) {
+            room.setAvailable(true);
+            this.roomService.saveRooms();
+        }
+
+        this.reservations.remove(reservation);
+        this.saveReservations();
+
+        return true;
     }
 
     public void exportToCsv(String path) {
@@ -151,52 +159,65 @@ public class ReservationService {
             );
         }
 
-        FileUtil.writeLines("data/reservations.txt", outputLines);
+        FileUtil.writeLines(FILE_PATH, outputLines);
         System.out.println("Reservations imported successfully.");
     }
 
     public int generateNextId() {
-        int var1 = 0;
+        int maxId = 0;
 
-        for(Reservation var3 : this.reservations) {
-            if (var3.getId() > var1) {
-                var1 = var3.getId();
+        for (Reservation reservation : this.reservations) {
+            if (reservation.getId() > maxId) {
+                maxId = reservation.getId();
             }
         }
 
-        return var1 + 1;
+        return maxId + 1;
     }
 
     private List<Reservation> loadReservations() {
-        ArrayList var1 = new ArrayList();
+        List<Reservation> loadedReservations = new ArrayList<>();
 
-        for(String var4 : FileUtil.readLines("data/reservations.txt")) {
-            if (!var4.trim().isEmpty()) {
-                String[] var5 = var4.split("\\|");
-                if (var5.length == 6) {
+        for (String line : FileUtil.readLines(FILE_PATH)) {
+            if (!line.trim().isEmpty()) {
+                String[] parts = line.split("\\|");
+
+                if (parts.length == 6) {
                     try {
-                        int var6 = Integer.parseInt(var5[0]);
-                        int var7 = Integer.parseInt(var5[1]);
-                        int var8 = Integer.parseInt(var5[2]);
-                        var1.add(new Reservation(var6, var7, var8, var5[3], var5[4], var5[5]));
-                    } catch (Exception var9) {
-                        System.out.println("Skipped invalid reservation line: " + var4);
+                        int id = Integer.parseInt(parts[0]);
+                        int guestId = Integer.parseInt(parts[1]);
+                        int roomId = Integer.parseInt(parts[2]);
+                        String checkInDate = parts[3];
+                        String checkOutDate = parts[4];
+                        String status = parts[5];
+
+                        loadedReservations.add(
+                                new Reservation(id, guestId, roomId, checkInDate, checkOutDate, status)
+                        );
+                    } catch (Exception e) {
+                        System.out.println("Skipped invalid reservation line: " + line);
                     }
                 }
             }
         }
 
-        return var1;
+        return loadedReservations;
     }
 
     private void saveReservations() {
-        ArrayList var1 = new ArrayList();
+        List<String> lines = new ArrayList<>();
 
-        for(Reservation var3 : this.reservations) {
-            int var10001 = var3.getId();
-            var1.add(var10001 + "|" + var3.getGuestId() + "|" + var3.getRoomId() + "|" + var3.getCheckInDate() + "|" + var3.getCheckOutDate() + "|" + var3.getStatus());
+        for (Reservation reservation : this.reservations) {
+            lines.add(
+                    reservation.getId() + "|" +
+                            reservation.getGuestId() + "|" +
+                            reservation.getRoomId() + "|" +
+                            reservation.getCheckInDate() + "|" +
+                            reservation.getCheckOutDate() + "|" +
+                            reservation.getStatus()
+            );
         }
 
-        FileUtil.writeLines("data/reservations.txt", var1);
+        FileUtil.writeLines(FILE_PATH, lines);
     }
 }

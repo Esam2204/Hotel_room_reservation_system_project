@@ -7,29 +7,29 @@ public class Room {
     private double pricePerNight;
     private boolean available;
 
-    public Room(int var1, String var2, String var3, double var4, boolean var6) {
-        this.id = var1;
-        this.roomNumber = var2;
-        this.type = var3;
-        this.pricePerNight = var4;
-        this.available = var6;
+    public Room(int id, String roomNumber, String type, double pricePerNight, boolean available) {
+        this.id = id;
+        this.roomNumber = roomNumber;
+        this.type = type;
+        this.pricePerNight = pricePerNight;
+        this.available = available;
     }
 
     public int getId() {
         return this.id;
     }
 
-    public void setId(int var1) {
-        this.id = var1;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getRoomNumber() {
         return this.roomNumber;
     }
 
-    public void setRoomNumber(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.roomNumber = var1.trim();
+    public void setRoomNumber(String roomNumber) {
+        if (roomNumber != null && !roomNumber.trim().isEmpty()) {
+            this.roomNumber = roomNumber.trim();
         } else {
             throw new IllegalArgumentException("Room number cannot be empty.");
         }
@@ -39,9 +39,9 @@ public class Room {
         return this.type;
     }
 
-    public void setType(String var1) {
-        if (var1 != null && !var1.trim().isEmpty()) {
-            this.type = var1.trim();
+    public void setType(String type) {
+        if (type != null && !type.trim().isEmpty()) {
+            this.type = type.trim();
         } else {
             throw new IllegalArgumentException("Room type cannot be empty.");
         }
@@ -51,11 +51,11 @@ public class Room {
         return this.pricePerNight;
     }
 
-    public void setPricePerNight(double var1) {
-        if (var1 < (double)0.0F) {
+    public void setPricePerNight(double pricePerNight) {
+        if (pricePerNight < 0) {
             throw new IllegalArgumentException("Price cannot be negative.");
         } else {
-            this.pricePerNight = var1;
+            this.pricePerNight = pricePerNight;
         }
     }
 
@@ -63,11 +63,19 @@ public class Room {
         return this.available;
     }
 
-    public void setAvailable(boolean var1) {
-        this.available = var1;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
+    @Override
     public String toString() {
-        return String.format("ID: %d | Room: %s | Type: %s | Price: %.2f | Available: %s", this.id, this.roomNumber, this.type, this.pricePerNight, this.available ? "Yes" : "No");
+        return String.format(
+                "ID: %d | Room: %s | Type: %s | Price: %.2f | Available: %s",
+                this.id,
+                this.roomNumber,
+                this.type,
+                this.pricePerNight,
+                this.available ? "Yes" : "No"
+        );
     }
 }
