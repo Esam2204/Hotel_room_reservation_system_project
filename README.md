@@ -120,4 +120,4 @@ This functionality is available through the console menu.
 ### Delete Guest
 ![Delete Guest](screenshots/delete_guest.png)
 
-https://docs.google.com/presentation/d/1mrxwMS3iAOtEwddcOjNiC_i04yGeCdcG/edit?usp=drivesdk&ouid=114669002090300183307&rtpof=true&sd=true
+https://docs.google.com/presentation/d/1kBQ7ldU7TdJyPxKqaeuw0RIFDM7MzxIM/edit?usp=drivesdk&ouid=114669002090300183307&rtpof=true&sd=true
