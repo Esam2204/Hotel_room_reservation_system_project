@@ -4,6 +4,8 @@ import hotel.model.*;
 import hotel.service.*;
 import hotel.util.InputUtil;
 import hotel.util.ValidationUtil;
+import hotel.model.UserAccount;
+import hotel.service.AuthService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,10 +16,32 @@ public class Main {
     private static final GuestService guestService = new GuestService();
     private static final RoomService roomService = new RoomService();
     private static final ReservationService reservationService = new ReservationService(roomService);
+    private static final AuthService authService = new AuthService();
+    private static UserAccount currentUser;
 
     public static void main(String[] args) {
+        loginMenu();
         showPolymorphismDemo();
         runApplication();
+    }
+
+    private static void loginMenu() {
+        System.out.println("===== LOGIN =====");
+
+        while (true) {
+            String username = InputUtil.promptNonEmpty(scanner, "Enter username: ");
+            String password = InputUtil.promptNonEmpty(scanner, "Enter password: ");
+
+            UserAccount user = authService.login(username, password);
+
+            if (user != null) {
+                currentUser = user;
+                System.out.println("Login successful. Role: " + currentUser.getRole());
+                break;
+            } else {
+                System.out.println("Invalid username or password. Try again.");
+            }
+        }
     }
 
     private static void showPolymorphismDemo() {
@@ -85,13 +109,33 @@ public class Main {
         System.out.println("4. Delete guest");
         System.out.println("0. Back");
 
-        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
+        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (choice) {
-            case 1 -> addGuest();
+        switch (var0) {
+            case 0 -> { }
+            case 1 -> {
+                if (currentUser.isAdmin()) {
+                    addGuest();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can add guests.");
+                }
+            }
             case 2 -> viewGuests();
-            case 3 -> updateGuest();
-            case 4 -> deleteGuest();
+            case 3 -> {
+                if (currentUser.isAdmin()) {
+                    updateGuest();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can update guests.");
+                }
+            }
+            case 4 -> {
+                if (currentUser.isAdmin()) {
+                    deleteGuest();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can delete guests.");
+                }
+            }
+            default -> System.out.println("Invalid menu option.");
         }
     }
 
@@ -103,13 +147,33 @@ public class Main {
         System.out.println("4. Delete room");
         System.out.println("0. Back");
 
-        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
+        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (choice) {
-            case 1 -> addRoom();
+        switch (var0) {
+            case 0 -> { }
+            case 1 -> {
+                if (currentUser.isAdmin()) {
+                    addRoom();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can add rooms.");
+                }
+            }
             case 2 -> viewRooms();
-            case 3 -> updateRoom();
-            case 4 -> deleteRoom();
+            case 3 -> {
+                if (currentUser.isAdmin()) {
+                    updateRoom();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can update rooms.");
+                }
+            }
+            case 4 -> {
+                if (currentUser.isAdmin()) {
+                    deleteRoom();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can delete rooms.");
+                }
+            }
+            default -> System.out.println("Invalid menu option.");
         }
     }
 
@@ -121,13 +185,33 @@ public class Main {
         System.out.println("4. Delete reservation");
         System.out.println("0. Back");
 
-        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
+        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (choice) {
-            case 1 -> addReservation();
+        switch (var0) {
+            case 0 -> { }
+            case 1 -> {
+                if (currentUser.isAdmin()) {
+                    addReservation();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can add reservations.");
+                }
+            }
             case 2 -> viewReservations();
-            case 3 -> updateReservation();
-            case 4 -> deleteReservation();
+            case 3 -> {
+                if (currentUser.isAdmin()) {
+                    updateReservation();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can update reservations.");
+                }
+            }
+            case 4 -> {
+                if (currentUser.isAdmin()) {
+                    deleteReservation();
+                } else {
+                    System.out.println("Access denied. Only ADMIN can delete reservations.");
+                }
+            }
+            default -> System.out.println("Invalid menu option.");
         }
     }
 

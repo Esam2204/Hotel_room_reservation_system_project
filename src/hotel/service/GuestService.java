@@ -23,7 +23,7 @@ public class GuestService {
         lines.add("id,name,email,phone");
 
         for (Guest guest : getAllGuests()) {
-            lines.add(
+            lines.add( // превращает объекты в строки
                     guest.getId() + "," +
                             guest.getName() + "," +
                             guest.getEmail() + "," +
@@ -31,7 +31,7 @@ public class GuestService {
             );
         }
 
-        FileUtil.writeLines(path, lines);
+        FileUtil.writeLines(path, lines); //записывается в файл
     }
 
     public void importFromCsv(String path) {

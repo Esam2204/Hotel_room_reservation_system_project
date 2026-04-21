@@ -1,2 +1,1 @@
-1,Eren,Eren@gmail.com,22222
-2,Укут,eren@gmail.com,22
+1|eren|eren@gmail.com|222

@@ -83,7 +83,21 @@ Users can:
 
 This functionality is available through the console menu.
 
+## Authentication and User Roles
 
+The project includes a basic authentication system.
+Users must log in before using the system.
+
+User data is stored in a file:
+- `data/users.txt`
+
+Two roles are supported:
+- `ADMIN` – full access to all operations
+- `USER` – view-only access
+
+Default accounts:
+- admin / admin123
+- user / user123
 
 
 # Hotel_room_reservation_system

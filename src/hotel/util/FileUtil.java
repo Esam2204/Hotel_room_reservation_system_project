@@ -66,6 +66,8 @@ public class FileUtil {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
                 writer.write(line);
                 writer.newLine();
+
+
             }
 
         } catch (IOException e) {
