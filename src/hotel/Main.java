@@ -109,9 +109,9 @@ public class Main {
         System.out.println("4. Delete guest");
         System.out.println("0. Back");
 
-        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
+        int choice = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (var0) {
+        switch (choice) {
             case 0 -> { }
             case 1 -> {
                 if (currentUser.isAdmin()) {
@@ -147,9 +147,9 @@ public class Main {
         System.out.println("4. Delete room");
         System.out.println("0. Back");
 
-        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
+        int choice_room = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (var0) {
+        switch (choice_room) {
             case 0 -> { }
             case 1 -> {
                 if (currentUser.isAdmin()) {
@@ -185,9 +185,9 @@ public class Main {
         System.out.println("4. Delete reservation");
         System.out.println("0. Back");
 
-        int var0 = InputUtil.promptInt(scanner, "Choose an option: ");
+        int choice_reservation = InputUtil.promptInt(scanner, "Choose an option: ");
 
-        switch (var0) {
+        switch (choice_reservation) {
             case 0 -> { }
             case 1 -> {
                 if (currentUser.isAdmin()) {
